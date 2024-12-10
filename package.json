@@ -22,6 +22,14 @@
     "engines": {
         "node": ">= 18.18.0 || >= 20.0.0"
     },
+    "lint-staged": {
+        "**/*.ts": [
+            "prettier --ignore-path ./.prettierignore --write"
+        ],
+        "packages/**/*.json": [
+            "prettier --ignore-path ./.prettierignore --write"
+        ]
+    },
     "scripts": {
         "build:cjs": "tsc --project tsconfig.cjs.json",
         "build:esm": "tsc --project tsconfig.esm.json",
