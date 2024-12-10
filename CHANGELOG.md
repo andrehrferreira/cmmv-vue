@@ -1,3 +1,12 @@
+## [0.0.3](https://github.com/andrehrferreira/cmmv-vue/compare/v0.0.2...v0.0.3) (2024-12-10)
+
+
+### Bug Fixes
+
+* husky ([6607099](https://github.com/andrehrferreira/cmmv-vue/commit/660709925fa48e414c3251a6079f0588adf1cc89))
+
+
+
 ## 0.0.2 (2024-12-10)
 
 
