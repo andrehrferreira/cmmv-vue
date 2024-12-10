@@ -27,7 +27,6 @@
         "build:esm": "tsc --project tsconfig.esm.json",
         "build": "npm run build:cjs && npm run build:esm",
         "generate": "NODE_ENV=dev node -r @swc-node/register ./src/generate.ts",
-        "test": "",
         "prepare": "husky",
         "lint": "pnpm run lint:spec",
         "lint:fix": "pnpm run lint:spec -- --fix",
