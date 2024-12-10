@@ -1,3 +1,12 @@
+## [0.0.4](https://github.com/andrehrferreira/cmmv-vue/compare/v0.0.3...v0.0.4) (2024-12-10)
+
+
+### Bug Fixes
+
+* cleanup ([ac59a18](https://github.com/andrehrferreira/cmmv-vue/commit/ac59a1845f843b52a86e7cbdaeb13f61786bcd08))
+
+
+
 ## [0.0.3](https://github.com/andrehrferreira/cmmv-vue/compare/v0.0.2...v0.0.3) (2024-12-10)
 
 

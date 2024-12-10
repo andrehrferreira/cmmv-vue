@@ -1,6 +1,6 @@
 {
     "name": "@cmmv/vue",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "CMMV module for generating RPC functions for Vue2 and Vue3",
     "keywords": [
         "cmmv",
