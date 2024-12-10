@@ -1,13 +1,12 @@
 import { ref, reactive, onMounted } from 'vue';
 import protobuf from 'protobufjs';
 
-export function useCMMV() {
+export function useRPC() {
     const socket = ref(null);
     const contractIndex = ref(0);
     const contracts = reactive({});
     const binds = reactive({});
 
-    // Conectar WebSocket
     const connectWebSocket = () => {
         const socketUrl = window.location.href.replace("https", "wss").replace("http", "ws");
         socket.value = new WebSocket(socketUrl);
@@ -30,7 +29,6 @@ export function useCMMV() {
         });
     };
 
-    // Adicionar contratos
     const addContracts = (jsonContracts) => {
         try {
             contractIndex.value = jsonContracts.index;
@@ -46,12 +44,10 @@ export function useCMMV() {
         }
     };
 
-    // Obter contrato
     const getContract = (contractName) => {
         return contracts[contractName];
     };
 
-    // Parse Message
     const parseMessage = (event) => {
         try {
             const buffer = event.data instanceof ArrayBuffer ? new Uint8Array(event.data) : event.data;
@@ -86,7 +82,6 @@ export function useCMMV() {
         }
     };
 
-    // Empacotar mensagem
     const pack = (contractName, messageName, data) => {
         try {
             if (contracts[contractName] && contractIndex.value[contractName]) {
@@ -114,7 +109,6 @@ export function useCMMV() {
         }
     };
 
-    // Enviar mensagem pelo WebSocket
     const send = (buffer) => {
         if (socket.value && socket.value.readyState === WebSocket.OPEN) {
             socket.value.send(buffer);
@@ -123,7 +117,6 @@ export function useCMMV() {
         }
     };
 
-    // Inicializar WebSocket e contratos
     onMounted(() => {
         //console.log("Load CMMV Mixins");
         addContracts(//%CONTRATCTS%);
@@ -131,7 +124,7 @@ export function useCMMV() {
     });
 
     const methods = {
-        //%RPCFUNCTIONS%
+        //%RPCFUNCTIONS_COMPOSABLE%
     }
 
     return {

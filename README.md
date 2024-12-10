@@ -44,7 +44,7 @@ For Vue 2, the module generates mixins for handling RPC methods. Here's an examp
 
 ```javascript
 import Vue from 'vue';
-import RPCMixins from 'http://localhost:3000/assets/rpc-mixins.js';
+import RPCMixins from '/assets/rpc-mixins.js';
 
 // Register RPC Mixins globally
 Vue.mixin(RPCMixins);
@@ -67,7 +67,7 @@ For Vue 3, the module generates composables for streamlined integration with the
 
 ```javascript
 import { createApp } from 'vue';
-import { useRPC } from 'http://localhost:3000/assets/rpc-composables.js';
+import { useRPC } from '/assets/rpc-composables.js';
 
 const app = createApp({
   setup() {
@@ -83,4 +83,52 @@ const app = createApp({
 });
 
 app.mount('#app');
+```
+
+### Nuxt
+
+In the plugins/ directory, create a file named rpc.client.ts to register the RPC composables globally.
+
+```javascript
+import { defineNuxtPlugin } from '#app';
+import { useRPC } from '/assets/rpc-composables.js';
+
+export default defineNuxtPlugin(() => {
+    return {
+        provide: {
+            rpc: useRPC(),
+        },
+    };
+});
+```
+
+**Example Component:** ``pages/index.vue``
+
+```vue
+<template>
+  <div>
+    <h1>Tasks</h1>
+    <ul>
+      <li v-for="task in tasks" :key="task.id">
+        {{ task.label }} - {{ task.checked ? 'Completed' : 'Pending' }}
+      </li>
+    </ul>
+    <button @click="fetchTasks">Load Tasks</button>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+
+const tasks = ref([]);
+const { $rpc } = useNuxtApp();
+
+const fetchTasks = async () => {
+  try {
+    tasks.value = await $rpc.GetTasksList();
+  } catch (error) {
+    console.error('Error fetching tasks:', error);
+  }
+};
+</script>
 ```

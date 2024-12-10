@@ -1,11 +1,20 @@
 {
     "name": "@cmmv/vue",
     "version": "0.0.1",
-    "description": "",
+    "description": "CMMV module for generating RPC functions for Vue2 and Vue3",
     "keywords": [
         "cmmv",
         "vue"
     ],
+    "main": "./dist/cjs/index.js",
+    "module": "./dist/esm/index.js",
+    "types": "./dist/types/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/esm/index.js",
+            "require": "./dist/cjs/index.js"
+        }
+    },
     "author": "Andre Ferreira",
     "publishConfig": {
         "access": "public"
@@ -17,6 +26,7 @@
         "build:cjs": "tsc --project tsconfig.cjs.json",
         "build:esm": "tsc --project tsconfig.esm.json",
         "build": "npm run build:cjs && npm run build:esm",
+        "generate": "NODE_ENV=dev node -r @swc-node/register ./src/generate.ts",
         "test": "",
         "prepare": "husky",
         "lint": "pnpm run lint:spec",
@@ -24,7 +34,13 @@
         "release": "node scripts/release.js",
         "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
     },
+    "files": [
+        "dist",
+        "src"
+    ],
     "devDependencies": {
+        "@cmmv/http": "^0.7.4",
+        "@cmmv/protobuf": "^0.7.4",
         "@cmmv/testing": "^0.7.4",
         "@commitlint/cli": "^19.6.0",
         "@commitlint/config-angular": "^19.6.0",
@@ -55,7 +71,6 @@
     },
     "dependencies": {
         "@cmmv/core": "^0.7.4",
-        "@cmmv/protobuf": "^0.7.4",
         "uglify-js": "^3.19.3",
         "vue": "^3.5.13"
     }

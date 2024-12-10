@@ -27,13 +27,18 @@ export class VueTranspile implements ITranspile {
 
     private generateMixins(contracts: any): void {
         const content = fs.readFileSync(
-            path.resolve(__dirname, './src/vue.mixins.cjs'),
+            path.resolve(__dirname, './vue.mixins.cjs'),
             'utf-8',
         );
         const composableContent = fs.readFileSync(
-            path.resolve(__dirname, './src/vue.composable.cjs'),
+            path.resolve(__dirname, './vue.composable.cjs'),
             'utf-8',
         );
+
+        const basePath = path.resolve('public/assets');
+
+        if(!fs.existsSync(basePath))
+            fs.mkdirSync(basePath, { recursive: true });
 
         const mixinsOutputFile = path.resolve('public/assets/rpc-mixins.js');
         const composableOutputFile = path.resolve('public/assets/rpc-composable.js');
@@ -87,6 +92,55 @@ export class VueTranspile implements ITranspile {
             })
             .join('\n');
 
+        const rpcFunctionsComposable = Object.keys(contracts.index)
+        .map(contractName => {
+            const types = contracts.index[contractName]?.types || {};
+            return Object.keys(types)
+                .map(typeName => {
+                    const methodName = typeName.replace(
+                        /Request|Response/,
+                        '',
+                    );
+
+                    if (typeName.endsWith('Request')) {
+                        if (methodName.startsWith('Add')) {
+                            return `
+    ${methodName}Request(data) {
+        const buffer = pack('${contractName}', '${typeName}', { item: data });
+        send(buffer);
+    },`;
+                        } else if (methodName.startsWith('Update')) {
+                            return `
+    ${methodName}Request(data) {
+        const buffer = pack('${contractName}', '${typeName}', { id: data._id || data.id, item: data });
+        send(buffer);
+    },`;
+                        } else if (methodName.startsWith('Delete')) {
+                            return `
+    ${methodName}Request(data) {
+        const buffer = pack('${contractName}', '${typeName}', { id: data._id || data.id });
+        send(buffer);
+    },`;
+                        } else if (methodName.startsWith('Get')) {
+                            return `
+    ${methodName}Request() {
+        const buffer = pack('${contractName}', '${typeName}');
+        send(buffer);
+    },`;
+                        } else {
+                            return `
+    ${methodName}Request(data) {
+        const buffer = pack('${contractName}', '${typeName}', data);
+        send(buffer);
+    },`;
+                        }
+                    }
+                    return '';
+                })
+                .join('\n');
+        })
+        .join('\n');
+
         const mixinTemplate = `
         // Generated automatically by CMMV
 
@@ -94,8 +148,7 @@ export class VueTranspile implements ITranspile {
             .replace('//%CONTRATCTS%', JSON.stringify(contracts))
             .replace('//%RPCFUNCTIONS%', rpcFunctions)}`;
 
-        const minifiedMixinTemplate = UglifyJS.minify(mixinTemplate).code;
-        fs.writeFileSync(mixinsOutputFile, minifiedMixinTemplate, 'utf8');
+        fs.writeFileSync(mixinsOutputFile, mixinTemplate, 'utf8');
         //this.logger.log(`RPC mixins generated successfully at ${mixinsOutputFile}`);
 
         const composableTemplate = `
@@ -103,10 +156,35 @@ export class VueTranspile implements ITranspile {
         
         ${composableContent
             .replace('//%CONTRATCTS%', JSON.stringify(contracts))
-            .replace('//%RPCFUNCTIONS%', rpcFunctions)}`;
+            .replace('//%RPCFUNCTIONS_COMPOSABLE%', rpcFunctionsComposable)}`;
         
-        const minifiedComposableTemplate = UglifyJS.minify(composableTemplate).code;
-        fs.writeFileSync(composableOutputFile, minifiedComposableTemplate, 'utf8');
+        fs.writeFileSync(composableOutputFile, composableTemplate, 'utf8');
+
+        const minifiedMixin = UglifyJS.minify(mixinTemplate, {
+            sourceMap: {
+                filename: 'rpc-mixins.js',
+                url: 'inline',
+            },
+        });
+
+        fs.writeFileSync(
+            mixinsOutputFile.replace(".js", ".min.js"),
+            minifiedMixin.code,
+            'utf8',
+        );
+
+        const minifiedComposable = UglifyJS.minify(composableTemplate, {
+            sourceMap: {
+                filename: 'rpc-composable.js',
+                url: 'inline',
+            },
+        });
+
+        fs.writeFileSync(
+            `${composableOutputFile.replace(".js", ".min.js")}`,
+            minifiedComposable.code,
+            'utf8',
+        );
     }
     
 }

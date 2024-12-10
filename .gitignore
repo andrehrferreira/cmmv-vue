@@ -55,3 +55,7 @@ docs/index*.json
 public/sitemap.xml
 docs/*.json
 docs/**/*.json
+public
+src/contracts
+src/models
+src/protos
