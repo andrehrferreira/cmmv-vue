@@ -1,3 +1,12 @@
+## [0.0.5](https://github.com/andrehrferreira/cmmv-vue/compare/v0.0.4...v0.0.5) (2025-01-24)
+
+
+### Bug Fixes
+
+* repository ([36dd86a](https://github.com/andrehrferreira/cmmv-vue/commit/36dd86aa10b9aac141cf76d55ca4bd6cce7d73f4))
+
+
+
 ## [0.0.4](https://github.com/cmmvio/cmmv-vue/compare/v0.0.3...v0.0.4) (2024-12-10)
 
 
